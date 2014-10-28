@@ -8,11 +8,7 @@ The [wiki] (https://github.com/att/XACML/wiki) has a lot of information on the o
 
 Click here to view the [JavaDoc] (http://att.github.io/XACML/javadocs/index.html).
 
-Tutorials and other useful information is also located on our [Github Pages site] (http://att.github.io/XACML).
-
-# Building the source code
-
-The AT&T Laboratories development team uses Eclipse to build the software. Simply import each project into an Eclipse workspace.
+Tutorials and other useful information is also located on our [Github Pages site] (http://att.github.io/XACML). TBD - working on this 10/14.
 
 # Requirements
 
@@ -20,6 +16,29 @@ The AT&T Laboratories development team uses Eclipse to build the software. Simpl
 
 *  Apache Ivy to bring external dependencies into the build environment. You will need to install the Apache IvyDE Eclipse plug-in for these dependencies to be resolved.
 
+# Building the source code
+
+The AT&T Laboratories development team uses Eclipse to build the software. Simply import each project into an Eclipse workspace.
+
+## Eclipse Luna 4.4.1 Problems
+
+### Ivy - Able to retrieve dependency jars but is unable to resolve, thus resulting in compilation errors.
+Ivy resolution management seems to have a bug in it starting with Luna v4.4.1. v4.0.1 seems to work fine. See https://issues.apache.org/jira/browse/IVY-1487 for more information.
+
+To resolve it, upgrade to the latest release of Ivy:
+
+https://builds.apache.org/job/ivyDE-updatesite/lastSuccessfulBuild/artifact/trunk/build/
+
+After Eclipse restarts, you may have to still do an Ivy refresh or resolve for each project. Or possibly "Clean All Projects" could do the trick.
+
+### JPA Problems in XACML-PAP-ADMIN project
+In luna 4.4.1, JPA may show errors that a class listed in the persistence.xml is not annotated. Clearly, they are annotated but it seems that the Eclipse Project needs some additional setup.
+
+1. Bring up the Project's Properties: right-click the project and select "Properties" menu item.
+2. Select JPA from the left-side menu.
+3. Under the "JPA Implementation" box on the right-side, click the "Download Library" icon on the farthest right-side.
+4. Select EclipseLink 2.5.2 and then "Next", accept the terms and click "Finish".
+5. You may still have to clean the project and/or resolve ivy dependencies for Eclipse to resolve any remaining compilation problems.
 
 # Milestones
 
