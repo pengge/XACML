@@ -15,6 +15,7 @@ import com.att.research.xacml.api.XACML3;
 import com.att.research.xacmlatt.pdp.policy.CombiningAlgorithm;
 import com.att.research.xacmlatt.pdp.policy.PolicySetChild;
 import com.att.research.xacmlatt.pdp.policy.Rule;
+import com.att.research.xacmlatt.pdp.std.combiners.CombinedPermitOverrides;
 import com.att.research.xacmlatt.pdp.std.combiners.DenyOverrides;
 import com.att.research.xacmlatt.pdp.std.combiners.DenyUnlessPermit;
 import com.att.research.xacmlatt.pdp.std.combiners.FirstApplicable;
@@ -25,6 +26,7 @@ import com.att.research.xacmlatt.pdp.std.combiners.LegacyPermitOverridesRule;
 import com.att.research.xacmlatt.pdp.std.combiners.OnlyOneApplicable;
 import com.att.research.xacmlatt.pdp.std.combiners.PermitOverrides;
 import com.att.research.xacmlatt.pdp.std.combiners.PermitUnlessDeny;
+import com.att.research.xacmlatt.pdp.util.ATTPDPProperties;
 
 /**
  * StdCombiningAlgorithms contains single instances of each of the {@link com.att.research.xacmlatt.pdp.policy.CombiningAlgorithm}
@@ -113,5 +115,11 @@ public class StdCombiningAlgorithms {
 		= new LegacyPermitOverridesRule(XACML1.ID_RULE_ORDERED_PERMIT_OVERRIDES);
 	public static final CombiningAlgorithm<PolicySetChild> CA_POLICY_LEGACY_ORDERED_PERMIT_OVERRIDES	
 		= new LegacyPermitOverridesPolicy(XACML1.ID_POLICY_ORDERED_PERMIT_OVERRIDES);
+	
+	//
+	// Custom AT&T Policy Combing Algorithms
+	//
+	public static final CombiningAlgorithm<PolicySetChild> CA_POLICY_COMBINED_PERMIT_OVERRIDES
+		= new CombinedPermitOverrides<PolicySetChild>(ATTPDPProperties.ID_POLICY_COMBINEDPERMITOVERRIDES);
 	
 }
