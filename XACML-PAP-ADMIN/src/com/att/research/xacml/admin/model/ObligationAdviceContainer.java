@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBElement;
 
 import oasis.names.tc.xacml._3_0.core.schema.wd_17.AdviceExpressionType;
 import oasis.names.tc.xacml._3_0.core.schema.wd_17.AdviceExpressionsType;
+import oasis.names.tc.xacml._3_0.core.schema.wd_17.ApplyType;
 import oasis.names.tc.xacml._3_0.core.schema.wd_17.AttributeAssignmentExpressionType;
 import oasis.names.tc.xacml._3_0.core.schema.wd_17.AttributeDesignatorType;
 import oasis.names.tc.xacml._3_0.core.schema.wd_17.AttributeSelectorType;
@@ -111,6 +112,7 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
     private Map<AttributeValueType, AttributeAssignmentExpressionType> values = new HashMap<AttributeValueType, AttributeAssignmentExpressionType>();
     private Map<AttributeDesignatorType, AttributeAssignmentExpressionType> designators = new HashMap<AttributeDesignatorType, AttributeAssignmentExpressionType>();
     private Map<AttributeSelectorType, AttributeAssignmentExpressionType> selectors = new HashMap<AttributeSelectorType, AttributeAssignmentExpressionType>();
+    private Map<ApplyType, AttributeAssignmentExpressionType> applys = new HashMap<ApplyType, AttributeAssignmentExpressionType>();
     
 	public ObligationAdviceContainer(Object root) {
 		super();
@@ -157,10 +159,13 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			this.designators.put((AttributeDesignatorType) element.getValue(), parent);
 		} else if (element.getValue() instanceof AttributeSelectorType) {
 			this.selectors.put((AttributeSelectorType) element.getValue(), parent);
+		} else if (element.getValue() instanceof ApplyType) {
+			this.applys.put((ApplyType) element.getValue(), parent);
 		} else {
 			//
 			// TODO
 			//
+			logger.error("Adding unknown expression type");
 		}
 	}
 
@@ -181,6 +186,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			return true;
 		}
 		if (itemId instanceof AttributeSelectorType) {
+			return true;
+		}
+		if (itemId instanceof ApplyType) {
 			return true;
 		}
 		return false;
@@ -228,6 +236,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		}
 		if (this.selectors.isEmpty() == false) {
 			items.add(this.selectors.keySet());
+		}
+		if (this.applys.isEmpty() == false) {
+			items.add(this.applys.keySet());
 		}
 		if (logger.isTraceEnabled()) {
 			logger.trace("getItemIds (" + items.size() + "):" + items);
@@ -325,6 +336,7 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		size += this.values.size();
 		size += this.designators.size();
 		size += this.selectors.size();
+		size += this.applys.size();
 		if (logger.isTraceEnabled()) {
 			logger.trace("size: " + size);
 		}
@@ -357,6 +369,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		}
 		if (itemId instanceof AttributeSelectorType) {
 			return this.selectors.containsKey(itemId);
+		}
+		if (itemId instanceof ApplyType) {
+			return this.applys.containsKey(itemId);
 		}
 		return false;
 	}
@@ -486,8 +501,11 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 					this.designators.put((AttributeDesignatorType) itemId, (AttributeAssignmentExpressionType) parent);
 				} else if (itemId instanceof AttributeSelectorType) {
 					this.selectors.put((AttributeSelectorType) itemId, (AttributeAssignmentExpressionType) parent);
+				} else if (itemId instanceof ApplyType) {
+					this.applys.put((ApplyType) itemId, (AttributeAssignmentExpressionType) parent);
 				} else {
 					logger.error("Should not get here. The object was checked in the beginning of the function. Someone removed or altered that check.");
+					assert(false);
 					return null;
 				}
 				//
@@ -591,8 +609,11 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 					this.designators.put((AttributeDesignatorType) itemId, (AttributeAssignmentExpressionType) parent);
 				} else if (itemId instanceof AttributeSelectorType) {
 					this.selectors.put((AttributeSelectorType) itemId, (AttributeAssignmentExpressionType) parent);
+				} else if (itemId instanceof ApplyType) {
+					this.applys.put((ApplyType) itemId, (AttributeAssignmentExpressionType) parent);
 				} else {
 					logger.error("Should not get here. Someone altered the object supported check or removed the code.");
+					assert(false);
 					return null;
 				}
 				//
@@ -641,6 +662,7 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		this.values.clear();
 		this.designators.clear();
 		this.selectors.clear();
+		this.applys.clear();
 		//
 		// Notify
 		//
@@ -665,6 +687,7 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		this.values.clear();
 		this.designators.clear();
 		this.selectors.clear();
+		this.applys.clear();
 		//
 		// Notify
 		//
@@ -749,6 +772,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		}
 		if (itemId instanceof AttributeSelectorType) {
 			return this.selectors.get(itemId);
+		}
+		if (itemId instanceof ApplyType) {
+			return this.applys.get(itemId);
 		}
 		return null;
 	}
@@ -910,6 +936,32 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			}
 			return false;
 		}
+		if (itemId instanceof ApplyType && newParentId instanceof AttributeAssignmentExpressionType) {
+			AttributeAssignmentExpressionType oldParent = this.applys.get(itemId);
+			if (oldParent != null &&
+				oldParent.getExpression() != null &&
+				oldParent.getExpression().getValue() != null &&
+				oldParent.getExpression().getValue() == itemId) {
+				//
+				// Remove from old parent
+				//
+				oldParent.setExpression(null);
+				//
+				// Put in new parent
+				//
+				((AttributeAssignmentExpressionType) newParentId).setExpression(new ObjectFactory().createApply((ApplyType) itemId));
+				//
+				// track it
+				//
+				this.applys.put((ApplyType) itemId, (AttributeAssignmentExpressionType) newParentId);
+				//
+				// Fire
+				//
+				this.fireItemSetChange();
+				return true;
+			}
+			return false;
+		}
 		return false;
 	}
 
@@ -933,6 +985,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 		if (itemId instanceof AttributeSelectorType) {
 			return false;
 		}
+		if (itemId instanceof ApplyType) {
+			return false;
+		}
 		return false;
 	}
 
@@ -954,6 +1009,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			return (areChildrenAllowed == false ? true : false);
 		}
 		if (itemId instanceof AttributeSelectorType) {
+			return (areChildrenAllowed == false ? true : false);
+		}
+		if (itemId instanceof ApplyType) {
 			return (areChildrenAllowed == false ? true : false);
 		}
 		return false;
@@ -1007,38 +1065,60 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			if (itemId instanceof ObligationExpressionType) {
 				if (((ObligationExpressionsType) this.root).getObligationExpression().remove(itemId)) {
 					//
+					// Remove this
+					//
+					if (this.rootObligations.remove(itemId) == false) {
+						//
+						//
+						//
+						assert(false);
+						logger.error("Removing item " + itemId + " failed to remove it from root obligation list");
+					}
+					//
 					// Notify
 					//
 					this.fireItemSetChange();
-					return this.rootObligations.remove(itemId);
+					return true ;
 				}
 			} else if (itemId instanceof AttributeAssignmentExpressionType) {
 				ObligationExpressionType parent = this.obligationExpressions.get(itemId);
 				if (parent != null && parent.getAttributeAssignmentExpression().remove(itemId)) {
+					if (this.obligationExpressions.remove(itemId) == null) {
+						assert(false);
+						logger.error("Removing item " + itemId + " failed to remove it from obligation expressions map");
+					}
 					//
 					// Notify
 					//
 					this.fireItemSetChange();
-					return (this.obligationExpressions.remove(itemId) != null);
+					return true;
 				}
 			}
 		} else if (this.root instanceof AdviceExpressionsType) {
 			if (itemId instanceof AdviceExpressionType) {
 				if (((AdviceExpressionsType) this.root).getAdviceExpression().remove(itemId)) {
+					if (this.rootAdvice.remove(itemId) == false) {
+						assert(false);
+						logger.error("Removing item " + itemId + " failed to remove it from root advice list");
+					}
 					//
 					// Notify
 					//
 					this.fireItemSetChange();
-					return this.rootAdvice.remove(itemId);
+					return true;
 				}
 			} else if (itemId instanceof AttributeAssignmentExpressionType) {
 				AdviceExpressionType parent = this.adviceExpressions.get(itemId);
 				if (parent != null && parent.getAttributeAssignmentExpression().remove(itemId)) {
+					if (this.adviceExpressions.remove(itemId) == null) {
+						assert(false);
+						logger.error("Removing item " + itemId + " failed to remove it from advice expressions map");
+					}
 					//
 					// Notify
 					//
 					this.fireItemSetChange();
-					return (this.adviceExpressions.remove(itemId) != null);
+					return true;
 				}
 			}
 		}
@@ -1084,6 +1164,20 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 				return (this.selectors.remove(itemId) == null);
 			}
 		}
+		if (itemId instanceof ApplyType) {
+			AttributeAssignmentExpressionType parent = this.applys.get(itemId);
+			if (parent != null && 
+				parent.getExpression() != null && 
+				parent.getExpression().getValue() != null && 
+				parent.getExpression().getValue().equals(itemId)) {
+				parent.setExpression(null);
+				//
+				// Notify
+				//
+				this.fireItemSetChange();
+				return (this.applys.remove(itemId) == null);
+			}
+		}
 		return false;
 	}
 
@@ -1114,6 +1208,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			if (this.data instanceof AttributeSelectorType) {
 				return "Attribute Selector";
 			}
+			if (this.data instanceof ApplyType) {
+				return "Apply";
+			}
 			return null;
 		}
 		
@@ -1139,6 +1236,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			}
 			if (this.data instanceof AttributeSelectorType) {
 				return ((AttributeSelectorType) this.data).getContextSelectorId();
+			}
+			if (this.data instanceof ApplyType) {
+				return ((ApplyType) this.data).getFunctionId();
 			}
 			return null;
 		}
@@ -1188,6 +1288,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			if (this.data instanceof AttributeSelectorType) {
 				return ((AttributeSelectorType) this.data).getDataType();
 			}
+			if (this.data instanceof ApplyType) {
+				
+			}
 			return null;
 		}
 
@@ -1227,6 +1330,9 @@ public class ObligationAdviceContainer extends ItemSetChangeNotifier implements 
 			}
 			if (this.data instanceof AttributeSelectorType) {
 				return ((AttributeSelectorType) this.data).getCategory();
+			}
+			if (this.data instanceof ApplyType) {
+				
 			}
 			return null;
 		}

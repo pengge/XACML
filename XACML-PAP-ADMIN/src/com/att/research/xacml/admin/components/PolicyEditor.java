@@ -244,6 +244,9 @@ public class PolicyEditor extends CustomComponent {
 			@Override
 			public InputStream getStream() {
 				try {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Setting view xml button to: " + self.file.getAbsolutePath());
+					}
 					return new FileInputStream(self.file);
 				} catch (Exception e) {
 					logger.error("Failed to open input stream " + self.file);
@@ -342,6 +345,10 @@ public class PolicyEditor extends CustomComponent {
 						self.editVariable((VariableDefinitionType) target, (PolicyType) self.policyContainer.getParent(target));
 					} else if (target instanceof MatchType) {
 						self.editMatch((MatchType) target, (AllOfType) self.policyContainer.getParent(target), null, null, "Edit Match");
+					} else if (target instanceof ObligationExpressionType) {
+						self.editObAdvice(true, self.policyContainer.getParent(target));
+					} else if (target instanceof AdviceExpressionType) {
+						self.editObAdvice(false, self.policyContainer.getParent(target));
 					}
 				}
 			}
@@ -927,7 +934,7 @@ public class PolicyEditor extends CustomComponent {
 					if (newPolicySet.getTarget() == null) {
 						newPolicySet.setTarget(new TargetType());
 					}
-					if (self.policyContainer.addItem(newPolicySet, parent) != null) {
+					if (self.policyContainer.addItem(newPolicySet, parent) == null) {
 						logger.error("Failed to add new policy set");
 					} else {
 						self.tree.setCollapsed(parent, false);
@@ -985,7 +992,7 @@ public class PolicyEditor extends CustomComponent {
 					if (newPolicy.getTarget() == null) {
 						newPolicy.setTarget(new TargetType());
 					}
-					if (self.policyContainer.addItem(newPolicy, parent) != null) {
+					if (self.policyContainer.addItem(newPolicy, parent) == null) {
 						logger.error("Failed to add policy");
 					} else {
 						self.tree.setCollapsed(parent, false);
@@ -1042,7 +1049,7 @@ public class PolicyEditor extends CustomComponent {
 					if (newRule.getTarget() == null) {
 						newRule.setTarget(new TargetType());
 					}
-					if (self.policyContainer.addItem(newRule, parent) != null) {
+					if (self.policyContainer.addItem(newRule, parent) == null) {
 						logger.error("Failed to add new rule");
 					} else {
 						self.tree.setCollapsed(parent, false);
@@ -1103,7 +1110,7 @@ public class PolicyEditor extends CustomComponent {
 					//
 					// Yes add the new one into the container
 					//
-					if (self.policyContainer.addItem(copyCondition, rule) != null) {
+					if (self.policyContainer.addItem(copyCondition, rule) == null) {
 						logger.error("Failed to add condition");
 					} else {
 						self.tree.setCollapsed(rule, false);
@@ -1183,7 +1190,7 @@ public class PolicyEditor extends CustomComponent {
 							//
 							// New one, add it to the container
 							//
-							if (self.policyContainer.addItem(copyVariable, parent) != null) {
+							if (self.policyContainer.addItem(copyVariable, parent) == null) {
 								logger.error("Failed to add variable");
 							} else {
 								self.tree.setCollapsed(parent, false);
@@ -1470,7 +1477,9 @@ public class PolicyEditor extends CustomComponent {
 						//
 						// Remove old obligations
 						//
-						for (ObligationExpressionType old : ((ObligationExpressionsType) originalExpressions).getObligationExpression()) {
+						while (((ObligationExpressionsType) originalExpressions).getObligationExpression().isEmpty() == false) {
+//						for (ObligationExpressionType old : ((ObligationExpressionsType) originalExpressions).getObligationExpression()) {
+							ObligationExpressionType old  = ((ObligationExpressionsType) originalExpressions).getObligationExpression().get(0);
 							self.policyContainer.removeItem(old);
 						}
 						//
