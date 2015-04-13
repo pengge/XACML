@@ -1,8 +1,14 @@
-# AT&T XACML
+# 4/2015 Update
 
-4-2015 Update - AT&T XACML will become an Apache Incubator Project in conjunction with the OpenAZ open source effort. All code is frozen at this point. Please join the mailing lists for Apache OpenAZ in order to get the latest source code:
+AT&T XACML will become an Apache Incubator Project in conjunction with the OpenAZ open source effort. All code is frozen at this point. Please join the mailing lists for Apache OpenAZ in order to get the latest source code:
 
 users-subscribe@openaz.incubator.apache.org
+
+Source code is located here:
+
+git://git.apache.org/incubator-openaz.git
+
+# AT&T XACML
 
 AT&amp;T's reference implementation of the OASIS XACML 3.0 Standard. The AT&T framework represents the entire XACML 3.0 object set as a collection of Java interfaces and standard implementations of those interfaces.  The AT&T PDP engine is built on top of this framework and represents a complete implementation of a XACML 3.0 PDP, including all of the multi-decision profiles. In addition, the framework also contains an implementation of the OASIS XACML 3.0 RESTful API v1.0 and XACML JSON Profile v1.0 WD 14. The PEP API includes annotation functionality, allowing application developers to simply annotate a Java class to provide attributes for a request. The annotation support removes the need for application developers to learn much of the API.
 
