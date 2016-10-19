@@ -40,7 +40,7 @@ import com.att.research.xacml.std.dom.DOMResponse;
 public class DOMResponseConformanceTest {
 	
 	// where to find the conformance test XML files
-	private final String CONFORMANCE_DIRECTORY_PATH = "testsets/conformance/xacml3.0-ct-v.0.4";
+	private final String CONFORMANCE_DIRECTORY_PATH = "src/test/resources/testsets/conformance/xacml3.0-ct-v.0.4";
 	
 	// The request object output from each test conversion from JSON string
 	Response response;
