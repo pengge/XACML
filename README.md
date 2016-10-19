@@ -1,12 +1,3 @@
-# 4/2015 Update
-
-AT&T XACML will become an Apache Incubator Project in conjunction with the OpenAZ open source effort. All code is frozen at this point. Please join the mailing lists for Apache OpenAZ in order to get the latest source code:
-
-users-subscribe@openaz.incubator.apache.org
-
-Source code is located here:
-
-git://git.apache.org/incubator-openaz.git
 
 # AT&T XACML
 
@@ -23,6 +14,8 @@ Tutorials and other useful information is also located on our [Github Pages site
 # Requirements
 
 * Java JDK 1.7, you will need to ensure Eclipse has that JDK installed in your development environment.
+
+
 
 *  Apache Ivy to bring external dependencies into the build environment. You will need to install the Apache IvyDE Eclipse plug-in for these dependencies to be resolved.
 
