@@ -1,5 +1,18 @@
+#
+# Eclipse specific
+#
+.classpath
+.project
+.settings/
+
+#
+# Good old mac
+#
 .DS_Store
 
+#
+# Maven specific
+#
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -10,6 +23,9 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
+#
+# Java
+#
 *.class
 
 # Mobile Tools for Java (J2ME)
