@@ -124,6 +124,11 @@ public class ISO8601TimeZone implements Comparable<ISO8601TimeZone>, SemanticStr
 		StringBuilder 	stringBuilder	= new StringBuilder();
 		if (offset < 0) {
 			stringBuilder.append('-');
+			//
+			// Fix a problem where negative offset timezones were displaying with two minuses
+			// Since the minus is contained within the int, as well as being appended above
+			//
+			offset = offset * -1;
 		} else {
 			stringBuilder.append('+');
 		}
