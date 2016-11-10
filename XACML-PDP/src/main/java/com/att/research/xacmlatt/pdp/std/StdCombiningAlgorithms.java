@@ -15,6 +15,7 @@ import com.att.research.xacml.api.XACML3;
 import com.att.research.xacmlatt.pdp.policy.CombiningAlgorithm;
 import com.att.research.xacmlatt.pdp.policy.PolicySetChild;
 import com.att.research.xacmlatt.pdp.policy.Rule;
+import com.att.research.xacmlatt.pdp.std.combiners.CombinedDenyOverrides;
 import com.att.research.xacmlatt.pdp.std.combiners.CombinedPermitOverrides;
 import com.att.research.xacmlatt.pdp.std.combiners.DenyOverrides;
 import com.att.research.xacmlatt.pdp.std.combiners.DenyUnlessPermit;
@@ -121,5 +122,7 @@ public class StdCombiningAlgorithms {
 	//
 	public static final CombiningAlgorithm<PolicySetChild> CA_POLICY_COMBINED_PERMIT_OVERRIDES
 		= new CombinedPermitOverrides<PolicySetChild>(ATTPDPProperties.ID_POLICY_COMBINEDPERMITOVERRIDES);
+	public static final CombiningAlgorithm<PolicySetChild> CA_POLICY_COMBINED_DENY_OVERRIDES
+		= new CombinedDenyOverrides<PolicySetChild>(ATTPDPProperties.ID_POLICY_COMBINEDDENYOVERRIDES);
 	
 }

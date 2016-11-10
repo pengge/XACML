@@ -39,3 +39,9 @@ buildNumber.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+/bin/
+
+#
+# JUnit test directories to ignore
+#
+XACML-TEST/src/test/resources/testsets/custom/datatype-function/results/

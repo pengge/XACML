@@ -22,6 +22,7 @@ public class ATTPDPProperties extends XACMLProperties {
 	public static final String PROP_POLICYFINDERFACTORY_COMBINEROOTPOLICIES = "xacml.att.policyFinderFactory.combineRootPolicies";
 	
 	public static final Identifier ID_POLICY_COMBINEDPERMITOVERRIDES = new IdentifierImpl("urn:com:att:xacml:3.0:policy-combining-algorithm:combined-permit-overrides");
+	public static final Identifier ID_POLICY_COMBINEDDENYOVERRIDES = new IdentifierImpl("urn:com:att:xacml:3.0:policy-combining-algorithm:combined-deny-overrides");
 	
 	protected ATTPDPProperties() {
 	}

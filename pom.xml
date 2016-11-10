@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.att.research.xacml</groupId>
-	<artifactId>XACML</artifactId>
+	<artifactId>att-xacml</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>ATT XACML</name>
@@ -10,6 +10,22 @@
 	<prerequisites>
 	    <maven>3.0</maven>
 	</prerequisites>
+	
+	<licenses>
+	  <license>
+	    <name>MIT License</name>
+	    <url>https://github.com/att/XACML/blob/master/LICENSE</url>
+	  </license>
+	</licenses>
+	
+	  <developers>
+	    <developer>
+	      <name>Pamela Dragosh</name>
+	      <email>pdragosh@research.att.com</email>
+	      <organization>ATT</organization>
+	      <organizationUrl>http://www.research.att.com</organizationUrl>
+	    </developer>
+	  </developers>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -181,6 +197,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+  
    <build>
         <pluginManagement>
             <plugins>

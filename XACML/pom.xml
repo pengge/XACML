@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
   <parent>
 	  <groupId>com.att.research.xacml</groupId>
-	  <artifactId>XACML</artifactId>
+	  <artifactId>att-xacml</artifactId>
 	  <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>xacml</artifactId>
