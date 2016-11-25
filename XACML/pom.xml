@@ -10,12 +10,12 @@
   </parent>
   <artifactId>xacml</artifactId>
   <name>att-xacml</name>
-  <description>AT&T reference implementation of the OASIS XACML 3.0 standard</description>
+  <description>ATT reference implementation of the OASIS XACML 3.0 standard</description>
   <url>https://github.com/att/XACML/tree/master/XACML</url>
     
     <licenses>
         <license>
-            <name>AT&T's MIT License</name>
+            <name>ATT's MIT License</name>
             <url>https://github.com/att/XACML/blob/master/LICENSE</url>
         </license>
     </licenses>
@@ -23,7 +23,7 @@
         <developer>
             <name>Pamela L Dragosh</name>
             <email>pdragosh@research.att.com</email>
-            <organization>AT&T Inc.</organization>
+            <organization>ATT Inc.</organization>
             <organizationUrl>https://www.att.com/</organizationUrl>
         </developer>
     </developers>
