@@ -3,46 +3,13 @@
     <parent>
 	  <groupId>com.att.research.xacml</groupId>
 	  <artifactId>att-xacml</artifactId>
-	  <version>0.0.1-SNAPSHOT</version>
+	  <version>1.0.0</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xacml-pdp</artifactId>
     <name>att-xacml-pdp</name>
     <description>ATT reference implementation of XACML PDP engine</description>
-    <url>https://github.com/att/XACML/tree/master/XACML-PDP</url>
-
-    <licenses>
-        <license>
-            <name>ATT's MIT License</name>
-            <url>https://github.com/att/XACML/blob/master/LICENSE</url>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>Pamela L Dragosh</name>
-            <email>pdragosh@research.att.com</email>
-            <organization>ATT Inc.</organization>
-            <organizationUrl>https://www.att.com/</organizationUrl>
-        </developer>
-    </developers>
-    <scm>
-        <connection>scm:git:git://github.com/att/XACML.git</connection>
-        <developerConnection>scm:git:ssh://github.com/att/XACML.git</developerConnection>
-        <url>http://github.com/att/XACML/tree/master/XACML-PDP</url>
-    </scm>
-     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -70,62 +37,5 @@
             <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.5</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 
 </project>

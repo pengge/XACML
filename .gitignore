@@ -40,6 +40,8 @@ buildNumber.properties
 hs_err_pid*
 
 /bin/
+XACML-PAP-ADMIN/bin/
+XACML-PDP-REST/bin/
 
 #
 # JUnit test directories to ignore
