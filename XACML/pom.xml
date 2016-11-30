@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>xacml</artifactId>
-  <name>xacml</name>
+  <name>att-xacml</name>
   <description>ATT reference implementation of the OASIS XACML 3.0 standard</description>
     
     <dependencies>

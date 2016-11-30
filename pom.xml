@@ -8,6 +8,7 @@
 	<packaging>pom</packaging>
 	<name>ATT XACML</name>
 	<description>ATT XACML Parent Project</description>
+	<url>https://github.com/att/XACML</url>
 
 	<prerequisites>
 		<maven>3.0</maven>
@@ -79,11 +80,13 @@
 	<modules>
 		<module>XACML</module>
 		<module>XACML-PDP</module>
+<!--
 		<module>XACML-TEST</module>
 		<module>XACML-REST</module>
 		<module>XACML-PDP-REST</module>
 		<module>XACML-PAP-REST</module>
 		<module>XACML-PAP-ADMIN</module>
+-->
 	</modules>
 
 	<dependencyManagement>
