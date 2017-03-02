@@ -7,7 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xacml-pap-admin</artifactId>
-    
+    <packaging>war</packaging>
+
     <repositories>
         <repository>
             <id>vaadin-addons</id>
@@ -25,8 +26,8 @@
         </repository>
     </repositories>
 
-     <properties>
-        <vaadin.version>7.1.11</vaadin.version>
+    <properties>
+        <vaadin.version>7.7.7</vaadin.version>
     </properties>
 
     <dependencies>
@@ -181,18 +182,23 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <configuration>
-                        <webXml>src\main\webapp\WEB-INF\web.xml</webXml>        
-                        <resource>
-                            <directory>src/META-INF</directory>
-                            <targetPath>META-INF</targetPath>
-                            <includes>
-                                <include>persistence.xml</include>
-                                <include>data.sql</include>
-                                <include>drop.sql</include>
-                                <include>empty.sql</include>
-                                <include>views.sql</include>
-                            </includes>
-                        </resource>
+                        <webXml>WebContent/WEB-INF/web.xml</webXml>
+                        <webResources>
+                            <resource>
+                                <directory>src/META-INF</directory>
+                                <targetPath>WEB-INF/classes/META-INF</targetPath>
+                                <includes>
+                                    <include>persistence.xml</include>
+                                    <include>data.sql</include>
+                                    <include>drop.sql</include>
+                                    <include>empty.sql</include>
+                                    <include>views.sql</include>
+                                </includes>
+                            </resource>
+                            <webResource>
+                                <directory>WebContent</directory>
+                            </webResource>
+                        </webResources>
                     </configuration>
                 </plugin>
             </plugins>
