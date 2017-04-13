@@ -11,8 +11,10 @@
 package com.att.research.xacmlatt.pdp.std.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.math.BigInteger;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import com.att.research.xacml.api.Attribute;
@@ -103,7 +107,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -148,7 +152,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Deny\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Deny\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -159,7 +163,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"NotApplicable\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"NotApplicable\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -170,7 +174,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -181,7 +185,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -192,7 +196,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -203,7 +207,7 @@ public class ResponseTest {
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -219,7 +223,7 @@ public class ResponseTest {
 		response.add(result2);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\"},{\"Decision\":\"Deny\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\"},{\"Decision\":\"Deny\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -235,7 +239,7 @@ public class ResponseTest {
 		response.add(result2);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\"},{\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\"},{\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -383,9 +387,7 @@ public class ResponseTest {
 		// convert Response to JSON
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-System.out.println(jsonResponse);
-//System.out.println(JSONResponse.toString(response, true));
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusMessage\":\"some status message\",\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:3.0:attribute-category:action\\\\\\\" AttributeId=\\\\\\\"urn:oasis:names:tc:xacml:2.0:action:purpose\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\" Issuer=\\\\\\\"an Issuer\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">doh</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">5432</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">meh</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"},{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer2\",\"Value\":\"Ned\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]},{\"Id\":\"urn:oasis:names:tc:xacml:1.0:subject-category:intermediary-subject\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer3\",\"Value\":\"Maggie\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer4\",\"Value\":\"Homer\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Deny\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"advice-issuer1\",\"Value\":\"Apu\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"advice-issuerNoCategory\",\"Value\":\"Crusty\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]},{\"Status\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"Value\":\"childChildChildStatusCode\"},\"Value\":\"childChildStatusCode\"},\"Value\":\"child1StatusCode\"},\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"},{\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrNoIssuer\"}]},{\"CategoryId\":\"secondCategory\",\"Attribute\":[{\"Issuer\":\"AIssue2\",\"Value\":\"Apu2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent12\"},{\"Issuer\":\"CIssue2\",\"Value\":\"Der2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent32\"}]}],\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\",\"Version\":\"1.2.3\"},{\"Id\":\"idRef2_NoVersion\"}],\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\",\"Version\":\"4.5.6.7.8.9.0\"},{\"Id\":\"idSetRef2_NoVersion\"}]}}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusMessage\":\"some status message\",\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:3.0:attribute-category:action\\\\\\\" AttributeId=\\\\\\\"urn:oasis:names:tc:xacml:2.0:action:purpose\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\" Issuer=\\\\\\\"an Issuer\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">doh</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">5432</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">meh</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"},{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer2\",\"Value\":\"Ned\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]},{\"Id\":\"urn:oasis:names:tc:xacml:1.0:subject-category:intermediary-subject\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer3\",\"Value\":\"Maggie\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer4\",\"Value\":\"Homer\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Deny\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"advice-issuer1\",\"Value\":\"Apu\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"advice-issuerNoCategory\",\"Value\":\"Crusty\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]},{\"Status\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"Value\":\"childChildChildStatusCode\"},\"Value\":\"childChildStatusCode\"},\"Value\":\"child1StatusCode\"},\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"},{\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrNoIssuer\"}]},{\"CategoryId\":\"secondCategory\",\"Attribute\":[{\"Issuer\":\"AIssue2\",\"Value\":\"Apu2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent12\"},{\"Issuer\":\"CIssue2\",\"Value\":\"Der2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent32\"}]}],\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\",\"Version\":\"1.2.3\"},{\"Id\":\"idRef2_NoVersion\"}],\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\",\"Version\":\"4.5.6.7.8.9.0\"},{\"Id\":\"idSetRef2_NoVersion\"}]}}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -409,21 +411,21 @@ System.out.println(jsonResponse);
 		result.setDecision(Decision.PERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.DENY);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Decision\":\"Deny\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Decision\":\"Deny\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.NOTAPPLICABLE);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Decision\":\"NotApplicable\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"}},\"Decision\":\"NotApplicable\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -501,28 +503,28 @@ System.out.println(jsonResponse);
 		result.setDecision(Decision.INDETERMINATE);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_DENY);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_DENYPERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_PERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"}},\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -560,28 +562,28 @@ System.out.println(jsonResponse);
 		result.setDecision(Decision.INDETERMINATE);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_DENY);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_DENYPERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_PERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"}},\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -620,28 +622,28 @@ System.out.println(jsonResponse);
 		result.setDecision(Decision.INDETERMINATE);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_DENY);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate{D}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_DENYPERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate{DP}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
 		result.setDecision(Decision.INDETERMINATE_PERMIT);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate{P}\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -680,7 +682,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -715,7 +717,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:syntax-error\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -751,7 +753,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:processing-error\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -787,7 +789,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -804,7 +806,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"}},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -849,7 +851,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -872,7 +874,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">meh</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">meh</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -896,7 +898,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">meh</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">nu?</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">meh</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\">nu?</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -920,7 +922,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-//			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">1111</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+//			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">1111</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
@@ -949,7 +951,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">1111</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">2222</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<MissingAttributeDetail Category=\\\\\\\"urn:oasis:names:tc:xacml:1.0:action\\\\\\\" AttributeId=\\\\\\\"mad\\\\\\\" DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#string\\\\\\\"><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">1111</AttributeValue><AttributeValue DataType=\\\\\\\"http://www.w3.org/2001/XMLSchema#integer\\\\\\\">2222</AttributeValue></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -982,7 +984,7 @@ System.out.println(jsonResponse);
 //		response.add(result);
 //		try {
 //			jsonResponse = JSONResponse.toString(response, false);
-//			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<AttributeValue>1111</AttributeValue><Category>urn:oasis:names:tc:xacml:1.0:action</Category><AttributeId>mad</AttributeId><DataType>http://www.w3.org/2001/XMLSchema#string</DataType></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+//			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<AttributeValue>1111</AttributeValue><Category>urn:oasis:names:tc:xacml:1.0:action</Category><AttributeId>mad</AttributeId><DataType>http://www.w3.org/2001/XMLSchema#string</DataType></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 //		} catch (Exception e) {
 //			fail("operation failed, e="+e);
 //		}
@@ -1006,7 +1008,7 @@ System.out.println(jsonResponse);
 //		response.add(result);
 //		try {
 //			jsonResponse = JSONResponse.toString(response, false);
-//			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<AttributeValue>1111</AttributeValue><AttributeValue>2222</AttributeValue><Category>urn:oasis:names:tc:xacml:1.0:action</Category><AttributeId>mad</AttributeId><DataType>http://www.w3.org/2001/XMLSchema#string</DataType></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
+//			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:missing-attribute\"},\"StatusDetail\":\"<AttributeValue>1111</AttributeValue><AttributeValue>2222</AttributeValue><Category>urn:oasis:names:tc:xacml:1.0:action</Category><AttributeId>mad</AttributeId><DataType>http://www.w3.org/2001/XMLSchema#string</DataType></MissingAttributeDetail>\"},\"Decision\":\"Indeterminate\"}]}", jsonResponse);
 //		} catch (Exception e) {
 //			fail("operation failed, e="+e);
 //		}
@@ -1080,7 +1082,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"StatusCode\":{\"Value\":\"child1StatusCode\"},\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"StatusCode\":{\"Value\":\"child1StatusCode\"},\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1098,7 +1100,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"Value\":\"childChildChildStatusCode\"},\"Value\":\"childChildStatusCode\"},\"Value\":\"child1StatusCode\"},\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Status\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"StatusCode\":{\"Value\":\"childChildChildStatusCode\"},\"Value\":\"childChildStatusCode\"},\"Value\":\"child1StatusCode\"},\"Value\":\"urn:oasis:names:tc:xacml:1.0:status:ok\"},\"StatusMessage\":\"I'm ok, you're ok\"},\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1133,7 +1135,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\"}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\"}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1171,7 +1173,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1192,7 +1194,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1234,7 +1236,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1254,7 +1256,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1274,7 +1276,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1294,7 +1296,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1315,7 +1317,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1361,7 +1363,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Lisa\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Maggie\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Lisa\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":\"Maggie\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1392,7 +1394,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":2222,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":3333,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"obligation-issuer1\",\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":2222,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"obligation-issuer1\",\"Value\":3333,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1418,7 +1420,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:hospital\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Obligations\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:hospital\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}	
@@ -1454,7 +1456,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\"}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\"}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1492,7 +1494,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1513,7 +1515,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1555,7 +1557,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1575,7 +1577,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1595,7 +1597,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1615,7 +1617,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1636,7 +1638,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1681,7 +1683,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Lisa\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Maggie\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Bart\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Lisa\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":\"Maggie\",\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1712,7 +1714,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":2222,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":3333,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Issuer\":\"Advice-issuer1\",\"Value\":1111,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":2222,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Issuer\":\"Advice-issuer1\",\"Value\":3333,\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1738,7 +1740,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:hospital\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"AssociatedAdvice\":[{\"Id\":\"urn:oasis:names:tc:xacml:1.0:action:implied-action\",\"AttributeAssignment\":[{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:record\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"},{\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"SimpleXPathCategory\",\"XPath\":\"//md:hospital\"},\"Category\":\"urn:oasis:names:tc:xacml:3.0:attribute-category:resource\",\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"urn:oasis:names:tc:xacml:1.0:subject\"}]}]}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1782,7 +1784,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1799,7 +1801,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1819,7 +1821,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"P10Y4M\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent2\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"P10Y4M\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent2\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1835,7 +1837,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1887,7 +1889,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1903,7 +1905,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1922,7 +1924,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":\"Simpson\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":\"Simpson\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1941,7 +1943,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":\"Simpson\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":\"Bart\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":\"Simpson\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1962,7 +1964,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":\"P10Y4M\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":\"P10Y4M\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"AIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -1983,7 +1985,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"P10Y4M\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"},{\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"P10Y4M\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"},{\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2003,7 +2005,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"AIssue\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent2\"},{\"Issuer\":\"AIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"AIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"AIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"BIssue\",\"Value\":\"AIssue\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#yearMonthDuration\",\"AttributeId\":\"attrIdent2\"},{\"Issuer\":\"AIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"AIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"AIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2020,7 +2022,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"xpathCategory\",\"XPath\":\"//md:record\"},\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":{\"Namespaces\":[{\"Namespace\":\"referenceForMD\",\"Prefix\":\"md\"},{\"Namespace\":\"defaultURI\"}],\"XPathCategory\":\"xpathCategory\",\"XPath\":\"//md:record\"},\"DataType\":\"urn:oasis:names:tc:xacml:3.0:data-type:xpathExpression\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2048,7 +2050,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"},{\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrNoIssuer\"}]},{\"CategoryId\":\"secondCategory\",\"Attribute\":[{\"Issuer\":\"AIssue2\",\"Value\":\"Apu2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent12\"},{\"Issuer\":\"CIssue2\",\"Value\":\"Der2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent32\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":\"Apu\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"},{\"Issuer\":\"CIssue\",\"Value\":765.432,\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent3\"},{\"Issuer\":\"DIssue\",\"Value\":true,\"DataType\":\"http://www.w3.org/2001/XMLSchema#boolean\",\"AttributeId\":\"attrIdent4\"},{\"Issuer\":\"EIssue\",\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrIdent5\"},{\"Value\":4567,\"DataType\":\"http://www.w3.org/2001/XMLSchema#integer\",\"AttributeId\":\"attrNoIssuer\"}]},{\"CategoryId\":\"secondCategory\",\"Attribute\":[{\"Issuer\":\"AIssue2\",\"Value\":\"Apu2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent12\"},{\"Issuer\":\"CIssue2\",\"Value\":\"Der2\",\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent32\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2072,7 +2074,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":[\"Apu\",\"Bart\",\"Homer\",\"Ned\"],\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":[\"Apu\",\"Bart\",\"Homer\",\"Ned\"],\"DataType\":\"http://www.w3.org/2001/XMLSchema#string\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2094,7 +2096,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":[4567,765.432,4567],\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Category\":[{\"CategoryId\":\"firstCategory\",\"Attribute\":[{\"Issuer\":\"AIssue\",\"Value\":[4567,765.432,4567],\"DataType\":\"http://www.w3.org/2001/XMLSchema#double\",\"AttributeId\":\"attrIdent1\"}]}],\"Decision\":\"Permit\"}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2160,7 +2162,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\",\"Version\":\"1.2.3\"},{\"Id\":\"idRef2_NoVersion\"}],\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\",\"Version\":\"4.5.6.7.8.9.0\"},{\"Id\":\"idSetRef2_NoVersion\"}]}}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\",\"Version\":\"1.2.3\"},{\"Id\":\"idRef2_NoVersion\"}],\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\",\"Version\":\"4.5.6.7.8.9.0\"},{\"Id\":\"idSetRef2_NoVersion\"}]}}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2211,7 +2213,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\",\"Version\":\"1.2.3\"}]}}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\",\"Version\":\"1.2.3\"}]}}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2231,7 +2233,7 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\",\"Version\":\"4.5.6.7.8.9.0\"}]}}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\",\"Version\":\"4.5.6.7.8.9.0\"}]}}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
@@ -2254,10 +2256,17 @@ System.out.println(jsonResponse);
 		response.add(result);
 		try {
 			jsonResponse = JSONResponse.toString(response, false);
-			assertEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\"},{\"Id\":\"idRef2_NoVersion\"}],\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\"},{\"Id\":\"idSetRef2_NoVersion\"}]}}]}", jsonResponse);
+			assertJsonEquals("{\"Response\":[{\"Decision\":\"Permit\",\"PolicyIdentifier\":{\"PolicyIdReference\":[{\"Id\":\"idRef1\"},{\"Id\":\"idRef2_NoVersion\"}],\"PolicySetIdReference\":[{\"Id\":\"idSetRef1\"},{\"Id\":\"idSetRef2_NoVersion\"}]}}]}", jsonResponse);
 		} catch (Exception e) {
 			fail("operation failed, e="+e);
 		}
+	}
+
+	private void assertJsonEquals(String expectedJson, String actualJson) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode tree = mapper.readTree(actualJson);
+		JsonNode treeExpected = mapper.readTree(expectedJson);
+		assertTrue(tree.equals(treeExpected));
 	}
 
 

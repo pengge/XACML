@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.att.research.xacml.api.Request;
@@ -362,6 +363,7 @@ public class FunctionDefinitionAccessPermittedTest {
 	
 	
 	
+	@Ignore
 	@Test
 	public void testAccess_permitted() {
 
