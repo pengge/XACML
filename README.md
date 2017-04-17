@@ -27,6 +27,8 @@ There are 3 webapps that need to run. Easiest to start them in this order in sep
 
 1. XACML-PAP-REST
 
+Open a terminal window and cd to the XACML-PAP-REST subdirectory.
+
 'mvn jetty:run-war'
 
 By default it will be running at localhost:9090/pap
@@ -34,6 +36,8 @@ By default it will be running at localhost:9090/pap
 If you point your browser to that URL, you should get a JSON back listing the groups of pdps, the policies and PIP configurations for those groups.
 
 2. XACML-PDP-REST
+
+Open a terminal window and cd to the XACML-PDP-REST subdirectory.
 
 'mvn jetty:run-war'
 
@@ -44,6 +48,8 @@ If you point your browser to this URL you can get the current configuration for 
 http://localhost:8080/pdp/?type=config
 
 3. XACML-PAP-ADMIN
+
+Open a terminal window and cd to the XACML-PAP-ADMIN subdirectory.
 
 'mvn jetty:run-war'
 
