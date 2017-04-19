@@ -6,6 +6,12 @@
 .settings/
 
 #
+# Intellij IDEA specific
+#
+.idea/
+*.iml
+
+#
 # Good old mac
 #
 .DS_Store
