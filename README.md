@@ -5,11 +5,11 @@ AT&amp;T's reference implementation of the OASIS XACML 3.0 Standard. The AT&T fr
 
 The AT&T framework also includes interfaces and implementations to standardize development of PIP engines that are used by the AT&T PDP implementation, and can be used by other implementations built on top of the AT&T framework. The framework also includes interfaces and implementations for a PAP distributed cloud infrastructure of PDP nodes that includes support for policy distribution and pip configurations. This PAP infrastructure includes a web application administrative console that contains a XACML 3.0 policy editor, attribute dictionary support, and management of PDP RESTful node instances. In addition, there are tools available for policy simulation.
 
-The [wiki] (https://github.com/att/XACML/wiki) has a lot of information on the organization of the software. 
+The [wiki](https://github.com/att/XACML/wiki) has a lot of information on the organization of the software. 
 
-Click here to view the [JavaDoc] (http://att.github.io/XACML/javadocs/index.html).
+Click here to view the [JavaDoc](http://att.github.io/XACML/javadocs/index.html).
 
-Tutorials and other useful information is also located on our [Github Pages site] (http://att.github.io/XACML). TBD - working on this 10/14.
+Tutorials and other useful information is also located on our [Github Pages site](http://att.github.io/XACML). TBD - working on this 10/14.
 
 # Requirements
 
