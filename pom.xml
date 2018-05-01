@@ -54,7 +54,11 @@
 	</distributionManagement>
 
 	<properties>
+		<project.source.version>1.8</project.source.version>
+		<project.target.version>1.8</project.target.version>
+		<project.encoding>UTF-8</project.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	    <jacoco.version>0.7.7.201606060606</jacoco.version>
 	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
 	    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -293,13 +297,9 @@
 		                <goal>prepare-agent</goal>
 		              </goals>
 		              <configuration>
-		                <!-- Sets the path to the file which contains the execution data. -->
-		                <destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
-		                <!--
-		            Sets the name of the property containing the settings
-		            for JaCoCo runtime agent.
-		        -->
+						<destFile>${sonar.jacoco.reportPaths}</destFile>
 		                <propertyName>surefireArgLine</propertyName>
+						<append>true</append>
 		              </configuration>
 		            </execution>
 		            <!--
@@ -313,9 +313,7 @@
 		                <goal>report</goal>
 		              </goals>
 		              <configuration>
-		                <!-- Sets the path to the file which contains the execution data. -->
-		                <dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
-		                <!-- Sets the output directory for the code coverage report. -->
+						<dataFile>${sonar.jacoco.reportPaths}</dataFile>
 		                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 		              </configuration>
 		            </execution>
@@ -326,13 +324,9 @@
 		                <goal>prepare-agent</goal>
 		              </goals>
 		              <configuration>
-		                <!-- Sets the path to the file which contains the execution data. -->
-		                <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
-		                <!--
-		            Sets the name of the property containing the settings
-		            for JaCoCo runtime agent.
-		        -->
+						<destFile>${sonar.jacoco.itReportPaths}</destFile>
 		                <propertyName>failsafeArgLine</propertyName>
+						<append>true</append>
 		              </configuration>
 		            </execution>
 		            <!--
@@ -346,9 +340,7 @@
 		                <goal>report</goal>
 		              </goals>
 		              <configuration>
-		                <!-- Sets the path to the file which contains the execution data. -->
-		                <dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
-		                <!-- Sets the output directory for the code coverage report. -->
+		                <dataFile>${sonar.jacoco.itReportPaths}</dataFile>
 		                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 		              </configuration>
 		            </execution>
