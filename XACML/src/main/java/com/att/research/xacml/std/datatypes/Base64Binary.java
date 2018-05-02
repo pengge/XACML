@@ -60,7 +60,7 @@ public class Base64Binary implements SemanticString {
 	
 	@Override
 	public int hashCode() {
-		return (this.getData() == null ? 0 : this.getData().hashCode());
+		return (this.getData() == null ? 0 : Arrays.hashCode(this.getData()));
 	}
 	
 	@Override
