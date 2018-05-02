@@ -13,6 +13,10 @@
   <name>att-xacml</name>
   <description>ATT reference implementation of the OASIS XACML 3.0 standard</description>
     
+    <properties>
+ 	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**,src/main/java/oasis/**/*</sonar.exclusions>		
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>

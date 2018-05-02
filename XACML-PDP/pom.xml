@@ -11,10 +11,6 @@
     <name>att-xacml-pdp</name>
     <description>ATT reference implementation of XACML PDP engine</description>
     
-    <properties>
- 	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**,src/main/java/oasis/**/*</sonar.exclusions>		
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.att.research.xacml</groupId>
