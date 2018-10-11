@@ -32,6 +32,9 @@ public class DataTypeBase64BinaryTest {
 		assertEquals(base64, datatype.convert(base64));
 		assertEquals(base64, datatype.convert(base64.getData()));
 		
+		assertNull(datatype.toStringValue(null));
+		assertEquals(base64.stringValue(), datatype.toStringValue(base64));
+		
 		String test64 = Base64.getEncoder().encodeToString(test.getBytes());
 		
 		System.out.println(test64);
@@ -44,9 +47,4 @@ public class DataTypeBase64BinaryTest {
 		
 	}
 	
-	@Test(expected = DataTypeException.class)
-	public void testConvert() throws DataTypeException {
-		DataTypeBase64Binary.newInstance().convert(new DataTypeTestObject());
-	}
-
 }
