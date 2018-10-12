@@ -13,8 +13,6 @@ package com.att.research.xacml.std.datatypes;
 
 import static org.junit.Assert.*;
 
-import java.util.Base64;
-
 import org.junit.Test;
 
 import com.att.research.xacml.api.DataTypeException;
@@ -34,17 +32,6 @@ public class DataTypeBase64BinaryTest {
 		
 		assertNull(datatype.toStringValue(null));
 		assertEquals(base64.stringValue(), datatype.toStringValue(base64));
-		
-		String test64 = Base64.getEncoder().encodeToString(test.getBytes());
-		
-		System.out.println(test64);
-		
-		Base64Binary convertedObject = datatype.convert(test);
-		
-		System.out.println(convertedObject);
-		
-		System.out.println(convertedObject.getData());
-		
 	}
 	
 }
