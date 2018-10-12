@@ -84,7 +84,7 @@ public class ISO8601Date implements IDateTime<ISO8601Date>, Comparable<ISO8601Da
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
-		} else if (obj == null || !(obj instanceof ISO8601Date)) {
+		} else if ( ! (obj instanceof ISO8601Date)) {
 			return false;
 		} else {
 			ISO8601Date iso8601Date	= (ISO8601Date)obj;
@@ -180,7 +180,6 @@ public class ISO8601Date implements IDateTime<ISO8601Date>, Comparable<ISO8601Da
 			switch(strDate.charAt(startPos)) {
 			case 'Z':
 				timezone	= "GMT";
-				startPos++;
 				break;
 			case '-':
 			case '+':
