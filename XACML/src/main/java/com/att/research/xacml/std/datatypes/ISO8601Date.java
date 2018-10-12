@@ -156,7 +156,7 @@ public class ISO8601Date implements IDateTime<ISO8601Date>, Comparable<ISO8601Da
 		startPos++;
 		
 		int month		= ParseUtils.getTwoDigitValue(strDate,  startPos);
-		if (month < 0 || month > 12) {
+		if (month < 1 || month > 12) {
 			throw new ParseException("Invalid month", startPos);
 		}
 		startPos		+= 2;
