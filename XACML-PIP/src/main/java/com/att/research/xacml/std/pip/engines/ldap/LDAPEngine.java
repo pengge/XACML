@@ -32,6 +32,7 @@ import com.att.research.xacml.api.pip.PIPResponse;
 import com.att.research.xacml.std.pip.StdMutablePIPResponse;
 import com.att.research.xacml.std.pip.StdPIPResponse;
 import com.att.research.xacml.std.pip.engines.StdConfigurableEngine;
+import com.att.research.xacml.util.XACMLProperties;
 import com.google.common.base.Splitter;
 import com.google.common.cache.Cache;
 
@@ -84,6 +85,12 @@ public class LDAPEngine extends StdConfigurableEngine {
 	private boolean configureStringProperty(String propertyPrefix, String property, Properties properties, String defaultValue) {
 		String propertyValue	= properties.getProperty(propertyPrefix + property, defaultValue);
 		if (propertyValue != null) {
+			if (property.equals(Context.PROVIDER_URL)) {
+				//
+				// MUST use environment value
+				//
+				propertyValue = XACMLProperties.resolveEnvironmentProperty(propertyValue);
+			}
 			this.ldapEnvironment.put(property, propertyValue);
 			return true;
 		} else {

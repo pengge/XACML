@@ -34,6 +34,7 @@ import com.att.research.xacml.std.pip.StdMutablePIPResponse;
 import com.att.research.xacml.std.pip.StdPIPResponse;
 import com.att.research.xacml.std.pip.engines.StdConfigurableEngine;
 import com.att.research.xacml.util.AttributeUtils;
+import com.att.research.xacml.util.XACMLProperties;
 import com.google.common.base.Splitter;
 import com.google.common.cache.Cache;
 
@@ -306,6 +307,11 @@ public class JDBCEngine extends StdConfigurableEngine {
 		//
 		if ((this.jdbcDriverClass = properties.getProperty(propPrefix + PROP_JDBC_DRIVER)) == null) {
 			throw new PIPException("No '" + propPrefix + PROP_JDBC_DRIVER + "' property");
+		} else {
+			//
+			// MUST be an environment value
+			//
+			this.jdbcDriverClass = XACMLProperties.resolveEnvironmentProperty(this.jdbcDriverClass);
 		}
 		try {
 			Class.forName(this.jdbcDriverClass);
@@ -315,6 +321,11 @@ public class JDBCEngine extends StdConfigurableEngine {
 		
 		if ((this.jdbcUrl = properties.getProperty(propPrefix + PROP_JDBC_URL)) == null) {
 			throw new PIPException("No '" + propPrefix + PROP_JDBC_URL + "' property");
+		} else {
+			//
+			// MUST be an environment value
+			//
+			this.jdbcUrl = XACMLProperties.resolveEnvironmentProperty(this.jdbcUrl);
 		}
 		//
 		// Go through all our resolvers
@@ -331,9 +342,17 @@ public class JDBCEngine extends StdConfigurableEngine {
 		// Check for these properties. They are not required.
 		//
 		if ((stringProp = properties.getProperty(propPrefix + PROP_JDBC_CONN_USER)) != null) {
+			//
+			// MUST be an environment value
+			//
+			stringProp = XACMLProperties.resolveEnvironmentProperty(stringProp);
 			this.jdbcConnProperties.setProperty("user", stringProp);
 		}
 		if ((stringProp = properties.getProperty(propPrefix + PROP_JDBC_CONN_PASS)) != null) {
+			//
+			// MUST be an environment value
+			//
+			stringProp = XACMLProperties.resolveEnvironmentProperty(stringProp);
 			this.jdbcConnProperties.setProperty("password", stringProp);
 		}
 		String jdbcConnPrefix	= propPrefix + PROP_JDBC_CONN;

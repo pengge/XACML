@@ -328,7 +328,25 @@ public class XACMLProperties {
 		}
 		return props;
 	}
+	
 	public static Properties getPipProperties() throws Exception {
 		return getPipProperties(XACMLProperties.getPipProperties());		
+	}
+	
+	/**
+	 * Resolves a property value defined ${envd:ENVIRONMENT_VALUE} by getting
+	 * a System environment and return that value. Will do a System.getenv("ENVIRONMENT_VALUE")
+	 * and return that result.
+	 * 
+	 * @param input String - must be format ${envd:MY_VALUE}
+	 * @return String Null if incorrect format or result from System.getenv
+	 */
+	public static String resolveEnvironmentProperty(String input) {
+		
+		if (input == null || !input.startsWith("${envd:") || !input.endsWith("}")) {
+			return null;
+		}
+		
+		return System.getenv(input.substring(7, input.length() - 1));
 	}
 }
