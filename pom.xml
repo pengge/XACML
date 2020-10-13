@@ -76,7 +76,7 @@
 		<version.commons.codec>1.14</version.commons.codec>
 		<version.commons.cli>1.4</version.commons.cli>
 		<version.commons.text>1.8</version.commons.text>
-		<version.junit>4.13</version.junit>
+		<version.junit>4.13.1</version.junit>
 		<version.mockito>3.2.4</version.mockito>
 		<version.log4j>2.11.0</version.log4j>
 		<version.xmlapi>1.4.01</version.xmlapi>
